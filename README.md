@@ -10,6 +10,66 @@ Cada etapa é essencial para garantir a validade científica do estudo. 💡
 
 ---
 
+## 📋 **REGRAS DE FLUXO DE TRABALHO (LEIA PRIMEIRO!)**
+
+### **🎯 Ordem de Execução das Tarefas:**
+1. **Execute as tarefas em ordem** - Tarefa 1 → Tarefa 2 → Tarefa 3
+2. **Complete uma tarefa por vez** - não inicie a próxima até terminar a atual
+3. **Termine no mesmo dia** - quando iniciar uma tarefa, vá até o fim para completá-la no mesmo dia
+4. **Evite interrupções** - mantenha o foco e o contexto da tarefa
+
+### **⏱️ Sistema de Contabilização de Horas:**
+- **Commits de início e fim**: Usamos os timestamps dos commits para calcular tempo exato
+- **Precisão científica**: Evita estimativas subjetivas e garante dados confiáveis
+- **Análise automática**: Processamos os dados de forma objetiva e consistente
+- **Comparação justa**: Permite comparar eficiência entre diferentes grupos e ferramentas
+
+### **📝 Instruções de Commits (OBRIGATÓRIO):**
+
+**Antes de iniciar cada tarefa:**
+```javascript
+console.log("Início Tarefa 1 - Claude"); // ou sua ferramenta de IA
+```
+```bash
+git add .
+git commit -m "chore: início tarefa 1"
+git push origin main
+```
+
+**Ao finalizar cada tarefa:**
+```bash
+git add .
+git commit -m "feat: conclusão tarefa 1"
+git push origin main
+```
+
+### **🚨 Caso não consiga finalizar no mesmo dia:**
+1. **Contabilize as horas trabalhadas** - registre o tempo gasto na tarefa
+2. **Faça commit do progresso atual** - salve o que foi feito até o momento
+3. **Entre em contato com os pesquisadores** - informe qual tarefa e quantas horas
+
+### **💬 Regras do Experimento:**
+
+#### **Grupos de Participantes:**
+- **GC** → Grupo Controle (sem IA)
+- **GE1** → Gemini
+- **GE2** → ChatGPT  
+- **GE3** → Claude
+
+#### **O que é permitido:**
+- Usar prompts para entender requisitos ou gerar código **relacionado à tarefa**
+- Ajustar, refatorar e comentar o código livremente
+- Consultar documentação oficial (MDN, Stack Overflow, etc.)
+- Usar ferramentas de desenvolvimento (VS Code, debugger, etc.)
+
+#### **O que é proibido:**
+- Usar ferramentas de IA **diferentes** da designada para seu grupo
+- Copiar código de outros participantes
+- Usar soluções prontas ou templates externos
+- Pular etapas ou pular tarefas
+
+---
+
 ## 🧩 Etapas de Participação
 
 ### 1. **Crie seu fork do repositório template**
@@ -311,48 +371,6 @@ Implementar um sistema de gerenciamento de tarefas em memória.
 
 ---
 
-## 💬 Regras do Experimento
-
-### 📋 Grupos de Participantes
-
-1. Cada participante pertence a **um grupo específico**:
-
-   * **GC** → Grupo Controle (sem IA)
-   * **GE1** → Gemini
-   * **GE2** → ChatGPT
-   * **GE3** → Claude
-
-2. Os grupos **experimentais** devem usar **apenas a ferramenta de IA designada** para auxiliar no desenvolvimento.
-
-### ⏱️ **Registro de Tempo (OBRIGATÓRIO)**
-
-**Antes de iniciar cada tarefa**, adicione um `console.log` no arquivo principal com:
-- Indicação de início da tarefa
-- Nome da ferramenta de IA utilizada (ou "Sem IA" para grupo controle)
-
-**Exemplo:**
-```javascript
-console.log("Início Tarefa 1 - Claude");
-```
-
-Faça o commit imediatamente:
-```bash
-git commit -m "chore: início tarefa 1"
-git push origin main
-```
-
-Isso permitirá calcular o tempo exato de desenvolvimento de cada tarefa através do histórico de commits.
-
-3. É permitido:
-
-   * Usar prompts para entender requisitos ou gerar código **relacionado à tarefa**.
-   * Ajustar, refatorar e comentar o código livremente.
-
-4. É proibido:
-
-   * Consultar repositórios externos prontos.
-   * Compartilhar código entre participantes.
-   * Utilizar múltiplas ferramentas de IA (apenas a designada).
 
 5. Todos os commits devem ser feitos com mensagens claras, por exemplo:
 
