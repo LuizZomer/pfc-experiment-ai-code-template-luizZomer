@@ -1,79 +1,181 @@
+const { describe, test, expect, beforeEach } = require("@jest/globals");
+const { TodoService } = require("./todoManager.js");
+
+let service;
+
+beforeEach(() => {
+  service = new TodoService();
+});
+
 describe("Sistema de Gerenciamento de Tarefas", () => {
-  // Implementar testes para createTask
   test("deve criar uma tarefa com dados básicos e código Jira", () => {
-    // Testar: criar tarefa com título, descrição e prioridade
-    // Verificar: ID único, código PROJ-1, status TODO, datas criadas
+    const task = service.create({
+      title: "Tarefa 1",
+      description: "Desc",
+      priority: "medium",
+    });
+    expect(task).toBeDefined();
+    expect(task.id).toBe(1);
+    expect(task.code).toBe("TASK-0001");
+    expect(task.status).toBe("todo");
+    expect(task.createdAt).toBeInstanceOf(Date);
+    expect(task.updatedAt).toBeInstanceOf(Date);
   });
 
-  // Implementar testes para listTasks
   test("deve listar todas as tarefas criadas", () => {
-    // Testar: criar 2 tarefas e listar
-    // Verificar: array com 2 tarefas, dados corretos
+    service.create({ title: "T1", description: "", priority: "low" });
+    service.create({ title: "T2", description: "", priority: "high" });
+
+    const all = service.findAll();
+    expect(all.length).toBe(2);
+    expect(all[0].title).toBe("T1");
+    expect(all[1].title).toBe("T2");
   });
 
-  // Implementar testes para updateTask
   test("deve atualizar dados de uma tarefa existente", () => {
-    // Testar: criar tarefa, atualizar título e prioridade
-    // Verificar: dados atualizados, updatedAt modificado
+    const task = service.create({
+      title: "Old",
+      description: "",
+      priority: "low",
+    });
+    const updated = service.update(task.id, { title: "New", priority: "high" });
+
+    expect(updated.title).toBe("New");
+    expect(updated.priority).toBe("high");
+    expect(updated.updatedAt).not.toBe(task.createdAt);
   });
 
-  // Implementar testes para deleteTask
   test("deve remover uma tarefa por ID", () => {
-    // Testar: criar tarefa, remover por ID
-    // Verificar: tarefa removida, array vazio
+    const task = service.create({
+      title: "Task",
+      description: "",
+      priority: "low",
+    });
+    const result = service.delete(task.id);
+
+    expect(result).toBe(true);
+    expect(service.todoList.length).toBe(0);
+
+    const notFound = service.delete(999);
+    expect(notFound).toBe(false);
   });
 
-  // Implementar testes para changeTaskStatus
   test("deve alterar status da tarefa e definir completedAt", () => {
-    // Testar: criar tarefa, mudar para DONE
-    // Verificar: status DONE, completedAt definido
+    const task = service.create({
+      title: "Task",
+      description: "",
+      priority: "medium",
+    });
+
+    const updated = service.updateTaskStatus(task.id, "in_progress");
+    expect(updated.status).toBe("in_progress");
+    expect(updated.completedAt).toBeNull();
+
+    const doneTask = service.updateTaskStatus(task.id, "done");
+    expect(doneTask.status).toBe("done");
+    expect(doneTask.completedAt).toBeInstanceOf(Date);
   });
 
-  // Implementar testes para filterTasksByStatus
   test("deve filtrar tarefas por status TODO", () => {
-    // Testar: criar tarefas com diferentes status, filtrar por TODO
-    // Verificar: apenas tarefas TODO retornadas
+    service.create({ title: "T1", description: "", priority: "low" });
+    service.create({ title: "T2", description: "", priority: "medium" });
+    service.updateTaskStatus(2, "done");
+
+    const todos = service.findAll({ status: "todo" });
+    expect(todos.length).toBe(1);
+    expect(todos[0].status).toBe("todo");
   });
 
-  // Implementar testes para filterTasksByPriority
   test("deve filtrar tarefas por prioridade HIGH", () => {
-    // Testar: criar tarefas com diferentes prioridades, filtrar por HIGH
-    // Verificar: apenas tarefas HIGH retornadas
+    service.create({ title: "T1", description: "", priority: "high" });
+    service.create({ title: "T2", description: "", priority: "low" });
+
+    const highTasks = service.findAll({ priority: "high" });
+    expect(highTasks.length).toBe(1);
+    expect(highTasks[0].priority).toBe("high");
   });
 
-  // Implementar testes para searchTasks
   test("deve buscar tarefas por título", () => {
-    // Testar: criar tarefas com títulos diferentes, buscar por palavra-chave
-    // Verificar: apenas tarefas com título correspondente
+    service.create({ title: "Hello World", description: "", priority: "low" });
+    service.create({
+      title: "Another Task",
+      description: "",
+      priority: "medium",
+    });
+
+    const result = service.findByTitle("hello");
+    expect(result.length).toBe(1);
+    expect(result[0].title).toBe("Hello World");
   });
 
-  // Implementar testes para getTaskCounts
   test("deve contar tarefas por status", () => {
-    // Testar: criar tarefas com diferentes status, contar
-    // Verificar: contadores corretos para cada status
+    service.create({ title: "T1", description: "", priority: "low" });
+    service.create({ title: "T2", description: "", priority: "medium" });
+    service.updateTaskStatus(2, "done");
+
+    const counts = service.countTasksByStatus();
+    expect(counts.todo).toBe(1);
+    expect(counts.in_progress).toBe(0);
+    expect(counts.done).toBe(1);
   });
 
-  // Implementar testes para generateTaskCode
   test("deve gerar códigos únicos sequenciais", () => {
-    // Testar: gerar 3 códigos consecutivos
-    // Verificar: PROJ-1, PROJ-2, PROJ-3
+    const t1 = service.create({
+      title: "T1",
+      description: "",
+      priority: "low",
+    });
+    const t2 = service.create({
+      title: "T2",
+      description: "",
+      priority: "medium",
+    });
+    const t3 = service.create({
+      title: "T3",
+      description: "",
+      priority: "high",
+    });
+
+    expect(t1.code).toBe("TASK-0001");
+    expect(t2.code).toBe("TASK-0002");
+    expect(t3.code).toBe("TASK-0003");
   });
 
-  // Implementar testes para findTaskByCode
   test("deve encontrar tarefa por código Jira", () => {
-    // Testar: criar tarefa, buscar por código
-    // Verificar: tarefa encontrada com dados corretos
+    const task = service.create({
+      title: "TaskCode",
+      description: "",
+      priority: "medium",
+    });
+    const found = service.findByCode(task.code);
+
+    expect(found).toBeDefined();
+    expect(found.id).toBe(task.id);
+
+    const notFound = service.findByCode("TASK-9999");
+    expect(notFound).toBeNull();
   });
 
-  // Teste de integração
   test("deve gerenciar ciclo completo de uma tarefa", () => {
-    // Cenário: criar tarefa → atualizar → mudar status → filtrar → buscar
-    // Verificar: todas as operações funcionando em sequência
+    const task = service.create({
+      title: "FullCycle",
+      description: "",
+      priority: "low",
+    });
+    service.update(task.id, { title: "Updated" });
+    service.updateTaskStatus(task.id, "done");
+
+    const byCode = service.findByCode(task.code);
+    const byTitle = service.findByTitle("Updated");
+
+    expect(byCode.status).toBe("done");
+    expect(byTitle.length).toBe(1);
+    expect(byTitle[0].title).toBe("Updated");
   });
 
-  // Teste de edge case
   test("deve lidar com operações em tarefas inexistentes", () => {
-    // Testar: atualizar, remover, mudar status de ID inexistente
-    // Resultado esperado: retorno null ou false apropriado
+    expect(service.update(999, { title: "X" })).toBeNull();
+    expect(service.delete(999)).toBe(false);
+    expect(service.updateTaskStatus(999, "done")).toBeNull();
   });
 });
